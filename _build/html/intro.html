@@ -1,0 +1,200 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Introduction &mdash; BerkeleyDB 5.3 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="BerkeleyDB 5.3 documentation" href="index.html" />
+    <link rel="prev" title="Supported Platforms" href="supported.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="supported.html" title="Supported Platforms"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">BerkeleyDB 5.3 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="introduction">
+<span id="id1"></span><h1>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h1>
+<p>This information was originally in <a class="reference external" href="http://linuxfromsratch.org/blfs/view/svn/server/db.html">http://linuxfromsratch.org/blfs/view/svn/server/db.html</a></p>
+<p>There was some minor modifications to make it more general, ie include other forms of distributions besides 5.3.21.</p>
+<p>The Berkeley DB package contains programs and utilities used by many other applications for database related functions.</p>
+<p>We willl use DIST=db-5.3.21, but here you can substitute your own distrubutions.This package is known to build and work properly using an LFS-7.3 platform.
+Package Information</p>
+<div class="line-block">
+<div class="line">Download (HTTP): <a class="reference external" href="http://download.oracle.com/berkeley-db/DIST.tar.gz">http://download.oracle.com/berkeley-db/DIST.tar.gz</a></div>
+<div class="line">Download MD5 sum: 3fda0b004acdaa6fa350bfc41a3b95ca</div>
+<div class="line">Download size: 34 MB</div>
+<div class="line">Estimated disk space required: 265 MB</div>
+<div class="line">Estimated build time: 0.4 SBU</div>
+</div>
+<p>User Notes: <a class="reference external" href="http://wiki.linuxfromscratch.org/blfs/wiki/db">http://wiki.linuxfromscratch.org/blfs/wiki/db</a></p>
+<div class="section" id="installation-of-berkeley-db">
+<h2>Installation of Berkeley DB<a class="headerlink" href="#installation-of-berkeley-db" title="Permalink to this headline">¶</a></h2>
+<p>Install Berkeley DB by running the following commands:</p>
+<div class="highlight-python"><pre>cd build_unix &amp;&amp;
+../dist/configure --prefix=/usr --enable-compat185 --enable-dbm --disable-static --enable-cxx       &amp;&amp;
+make</pre>
+</div>
+<p>Now, as the root user:</p>
+<div class="highlight-python"><pre>make docdir=/usr/share/doc/DIST install &amp;&amp;
+chown -v -R root:root /usr/bin/db_* /usr/include/db{,_185,_cxx}.h /usr/lib/libdb*.{so,la} /usr/share/doc/DIST</pre>
+</div>
+</div>
+<div class="section" id="command-explanations">
+<h2>Command Explanations<a class="headerlink" href="#command-explanations" title="Permalink to this headline">¶</a></h2>
+<p>cd build_unix &amp;&amp; ../dist/configure &#8211;prefix=/usr...: This replaces the normal ./configure command, as Berkeley DB comes with various build directories for different platforms.</p>
+<p>&#8211;enable-compat185:     This switch enables building the DB-1.85 compatibility API.</p>
+<p>&#8211;enable-cxx:           This switch enables building C++ API libraries.</p>
+<p>&#8211;enable-dbm:           Enables legacy interface support needed by some older packages.</p>
+<p>make docdir=/usr/share/doc/DIST install: This installs the documentation in the standard location instead of /usr/docs.</p>
+<p>chown -v -R root:root ...:This command changes the ownership of various installed files from the uid:gid of the builder to root:root.</p>
+<p>&#8211;enable-tcl &#8211;with-tcl=/usr/lib:       Enables Tcl support in DB and creates the libdb_tcl libraries.</p>
+<p>&#8211;enable-java:                          Enables Java support in DB and creates the libdb_java libraries.</p>
+</div>
+<div class="section" id="contents">
+<h2>Contents<a class="headerlink" href="#contents" title="Permalink to this headline">¶</a></h2>
+<p>Installed Programs: db_archive, db_checkpoint, db_deadlock, db_dump, db_hotbackup, db_load, db_log_verify, db_printlog, db_recover, db_replicate, db_stat, db_tuner, db_upgrade and db_verify.
+Installed Libraries: libdb.so and libdb_cxx.so
+Installed Directory: /usr/share/doc/db-5.3.21</p>
+<div class="section" id="short-descriptions">
+<h3>Short Descriptions<a class="headerlink" href="#short-descriptions" title="Permalink to this headline">¶</a></h3>
+<p id="index-0">db_archive</p>
+<blockquote>
+<div>prints the pathnames of log files that are no longer in use.</div></blockquote>
+<p>db_checkpoint</p>
+<blockquote>
+<div>is a daemon process used to monitor and checkpoint database logs.</div></blockquote>
+<p>db_deadlock</p>
+<blockquote>
+<div>is used to abort lock requests when deadlocks are detected.</div></blockquote>
+<p>db_dump</p>
+<blockquote>
+<div>converts database files to a flat file format readable by db_load.</div></blockquote>
+<p>db_hotbackup</p>
+<blockquote>
+<div>creates &#8220;hot backup&#8221; or &#8220;hot failover&#8221; snapshots of Berkeley DB databases.</div></blockquote>
+<p>db_load</p>
+<blockquote>
+<div>is used to create database files from flat files created with db_dump.</div></blockquote>
+<p>db_log_verify</p>
+<blockquote>
+<div>verifies the log files of a database.</div></blockquote>
+<p>db_printlog</p>
+<blockquote>
+<div>converts database log files to human readable text.</div></blockquote>
+<p>db_recover</p>
+<blockquote>
+<div>is used to restore a database to a consistent state after a failure.</div></blockquote>
+<p>db_replicate</p>
+<blockquote>
+<div>is a daemon process that provides replication/HA services on a transactional environment.</div></blockquote>
+<p>db_stat</p>
+<blockquote>
+<div>displays database environment statistics</div></blockquote>
+<p>db_tuner</p>
+<blockquote>
+<div>analyzes the data in a btree database, and suggests a page size that is likely to deliver optimal operation.</div></blockquote>
+<p>db_upgrade</p>
+<blockquote>
+<div>is used to upgrade database files to a newer version of Berkeley DB.</div></blockquote>
+<p>db_verify</p>
+<blockquote>
+<div>is used to run consistency checks on database files.</div></blockquote>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Introduction</a><ul>
+<li><a class="reference internal" href="#installation-of-berkeley-db">Installation of Berkeley DB</a></li>
+<li><a class="reference internal" href="#command-explanations">Command Explanations</a></li>
+<li><a class="reference internal" href="#contents">Contents</a><ul>
+<li><a class="reference internal" href="#short-descriptions">Short Descriptions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="supported.html"
+                        title="previous chapter">Supported Platforms</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/intro.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="supported.html" title="Supported Platforms"
+             >previous</a> |</li>
+        <li><a href="index.html">BerkeleyDB 5.3 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Alex Morales.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2b1.
+    </div>
+  </body>
+</html>

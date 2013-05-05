@@ -1,0 +1,155 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>The Berkeley DB Tutorial &mdash; BerkeleyDB 5.3 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="BerkeleyDB 5.3 documentation" href="index.html" />
+    <link rel="next" title="About this Tutorial" href="about-tut.html" />
+    <link rel="prev" title="Introduction" href="intro.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="about-tut.html" title="About this Tutorial"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="intro.html" title="Introduction"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">BerkeleyDB 5.3 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="the-berkeley-db-tutorial">
+<span id="tutorial-index"></span><h1>The Berkeley DB Tutorial<a class="headerlink" href="#the-berkeley-db-tutorial" title="Permalink to this headline">¶</a></h1>
+<p>This tutorial was adapted from Berkeley DB&#8217;s Refernce Guide.</p>
+<p>The Berkeley DB library is an open source embeded database library which provides a scalable, high-performance, transaction protection services to applictaions.
+Berkeley DB is scalable in a number of respects. The database library itself is quite compact (under 300 kilobytes of text space on common architectures), but it can manage databases up to 256 terabytes in size. It also supports high concurrency, with thousands of users operating on the same database at the same time. Berkeley DB is small enough to run in tightly constrained embedded systems, but can take advantage of gigabytes of memory and terabytes of disk on high-end server machines.</p>
+<p>Berkeley DB generally outperforms relational and object-oriented database systems in embedded applications for a couple of reasons. First, because the library runs in the same address space, no inter-process communication is required for database operations. The cost of communicating between processes on a single machine, or among machines on a network, is much higher than the cost of making a function call. Second, because Berkeley DB uses a simple function-call interface for all operations, there is no query language to parse, and no execution plan to produce.</p>
+<p>It should be noted that Berkeley is not a relational database, not does it suppport SQL queries. Nor does it implicitly maintain structure or records in the table like other relation databases might.</p>
+<div class="section" id="data-access-services">
+<h2>Data Access Services<a class="headerlink" href="#data-access-services" title="Permalink to this headline">¶</a></h2>
+<p>Berkeley DB supports hash tables, Btrees, simple record-number-based storage, and persistent queues. Programmers can create and mix operations on different kinds of tables in a single application.</p>
+<p>Hash tables are generally good for very large databases that need predictable search and update times for random-access records. Hash tables allow users to ask, &#8220;Does this key exist?&#8221; or to fetch a record with a known key. Hash tables do not allow users to ask for records with keys that are close to a known key.</p>
+<p>Btrees are better for range-based searches, as when the application needs to find all records with keys between some starting and ending value. Btrees also do a better job of exploiting locality of reference. If the application is likely to touch keys near each other at the same time, the Btrees work well. The tree structure keeps keys that are close together near one another in storage, so fetching nearby values usually doesn&#8217;t require a disk access.</p>
+<p>Record-number-based storage is natural for applications that need to store and fetch records, but that do not have a simple way to generate keys of their own. In a record number table, the record number is the key for the record. Berkeley DB will generate these record numbers automatically.</p>
+<p>Queues are well-suited for applications that create records, and then must deal with those records in creation order. A good example is on-line purchasing systems. Orders can enter the system at any time, but should generally be filled in the order in which they were placed.</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="about-tut.html">About this Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="about-tut.html#programming-concepts">Programming concepts</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="about-tut.html#key-data-pairs">key/data pairs</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="basic-concepts.html">Object Handles</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="basic-concepts.html#description">Description</a></li>
+<li class="toctree-l2"><a class="reference internal" href="basic-concepts.html#environment-variables">Environment Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="basic-concepts.html#errors">Errors</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="opening-database.html">Opening a database</a></li>
+<li class="toctree-l1"><a class="reference internal" href="adding-elements.html">Adding items to database</a></li>
+<li class="toctree-l1"><a class="reference internal" href="retrieve-elements.html">Retrieving elements from databases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="deleting-elements.html">Deleting elements from Database</a></li>
+<li class="toctree-l1"><a class="reference internal" href="database-application.html">Simple Access example</a></li>
+</ul>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">The Berkeley DB Tutorial</a><ul>
+<li><a class="reference internal" href="#data-access-services">Data Access Services</a><ul>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="intro.html"
+                        title="previous chapter">Introduction</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="about-tut.html"
+                        title="next chapter">About this Tutorial</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/tutorial.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="about-tut.html" title="About this Tutorial"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="intro.html" title="Introduction"
+             >previous</a> |</li>
+        <li><a href="index.html">BerkeleyDB 5.3 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Alex Morales.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2b1.
+    </div>
+  </body>
+</html>

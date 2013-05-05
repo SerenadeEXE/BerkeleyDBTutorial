@@ -1,0 +1,198 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Simple Access example &mdash; BerkeleyDB 5.3 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="BerkeleyDB 5.3 documentation" href="index.html" />
+    <link rel="up" title="The Berkeley DB Tutorial" href="tutorial.html" />
+    <link rel="prev" title="Deleting elements from Database" href="deleting-elements.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="deleting-elements.html" title="Deleting elements from Database"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">BerkeleyDB 5.3 documentation</a> &raquo;</li>
+          <li><a href="tutorial.html" accesskey="U">The Berkeley DB Tutorial</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="simple-access-example">
+<span id="database-application"></span><h1>Simple Access example<a class="headerlink" href="#simple-access-example" title="Permalink to this headline">¶</a></h1>
+<p>By now you should have an ituition on how Berkeley DB access methods works. We show a simple example using what we have learned so far.</p>
+<div class="highlight-python"><pre>int
+main(argc, argv)
+        int argc;
+        char *argv[];
+{
+        extern int optind;
+        DB *dbp;
+        DBC *dbcp;
+        DBT key, data;
+        size_t len;
+        int ch, ret, rflag;
+        char *database, *p, *t, buf[1024], rbuf[1024];
+        const char *progname = "ex_access";             /* Program name. */</pre>
+</div>
+<p>We will build a program which takes in strings as keys and thier data content is the reverse of the string for example. If we provide a key <cite>apple</cite> the data would be <cite>elppa</cite>.
+Above is what we will need for the program, note here we use DBC which is a cursor, an itterator, to iterate through the data when we print out the infromation. S
+We omit the input processing to keep this example short.
+First we need to create and open the database, here we are using a Btree for our database type.</p>
+<div class="highlight-python"><pre>...
+/* Create and initialize database object, open the database. */
+if ((ret = db_create(&amp;dbp, NULL, 0)) != 0) {
+        fprintf(stderr,
+            "%s: db_create: %s\n", progname, db_strerror(ret));
+        return (EXIT_FAILURE);
+}
+...
+if ((ret = dbp-&gt;open(dbp,
+    NULL, database, NULL, DB_BTREE, DB_CREATE, 0664)) != 0) {
+        dbp-&gt;err(dbp, ret, "%s: open", database);
+        goto err1;
+}</pre>
+</div>
+<p>We first need to fill the database with infromation until the user specifies <cite>exit</cite> or <cite>quit</cite>. Note that we use NOOVERWRITE since will be adding the same element.</p>
+<div class="highlight-python"><pre>memset(&amp;key, 0, sizeof(DBT));
+memset(&amp;data, 0, sizeof(DBT));
+for (;;) {
+        printf("input&gt; ");
+        fflush(stdout);
+        if (fgets(buf, sizeof(buf), stdin) == NULL)
+                break;
+        if (strcmp(buf, "exit\n") == 0 || strcmp(buf, "quit\n") == 0)
+                break;
+        if ((len = strlen(buf)) &lt;= 1)
+                continue;
+        for (t = rbuf, p = buf + (len - 2); p &gt;= buf;)
+                *t++ = *p--;
+        *t++ = '\0';
+
+        key.data = buf;
+        data.data = rbuf;
+        data.size = key.size = (u_int32_t)len - 1;
+
+        switch (ret =
+            dbp-&gt;put(dbp, NULL, &amp;key, &amp;data, DB_NOOVERWRITE)) {
+        case 0:
+                break;
+        default:
+                dbp-&gt;err(dbp, ret, "DB-&gt;put");
+                if (ret != DB_KEYEXIST)
+                        goto err1;
+                break;
+        }
+}</pre>
+</div>
+<p>Finally we want to walk throught the database to look at the items which we have added and close the database. The dbcp is a handle to the records in the database thus we can access the next, previous and other methods to itterate through the database.</p>
+<div class="highlight-python"><pre>...
+/* Initialize the key/data pair so the flags aren't set. */
+memset(&amp;key, 0, sizeof(key));
+memset(&amp;data, 0, sizeof(data));
+
+/* Walk through the database and print out the key/data pairs. */
+while ((ret = dbcp-&gt;get(dbcp, &amp;key, &amp;data, DB_NEXT)) == 0)
+        printf("%.*s : %.*s\n",
+            (int)key.size, (char *)key.data,
+            (int)data.size, (char *)data.data);
+if (ret != DB_NOTFOUND) {
+        dbp-&gt;err(dbp, ret, "DBcursor-&gt;get");
+        goto err2;
+}
+
+/* Close everything down. */
+if ((ret = dbcp-&gt;close(dbcp)) != 0) {
+        dbp-&gt;err(dbp, ret, "DBcursor-&gt;close");
+        goto err1;
+}
+if ((ret = dbp-&gt;close(dbp, 0)) != 0) {
+        fprintf(stderr,
+            "%s: DB-&gt;close: %s\n", progname, db_strerror(ret));
+        return (EXIT_FAILURE);</pre>
+</div>
+<p>To compile this program we would use</p>
+<div class="highlight-python"><pre>gcc ex_access.c -ldb</pre>
+</div>
+<p>where the <cite>-ldb</cite> indicates that we are linking the Berkeley DB library.</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="deleting-elements.html"
+                        title="previous chapter">Deleting elements from Database</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/database-application.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="deleting-elements.html" title="Deleting elements from Database"
+             >previous</a> |</li>
+        <li><a href="index.html">BerkeleyDB 5.3 documentation</a> &raquo;</li>
+          <li><a href="tutorial.html" >The Berkeley DB Tutorial</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Alex Morales.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2b1.
+    </div>
+  </body>
+</html>
